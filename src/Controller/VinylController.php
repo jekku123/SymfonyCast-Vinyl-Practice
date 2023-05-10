@@ -7,11 +7,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use function Symfony\Component\String\u;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
-
 class VinylController extends AbstractController
 {
-    #[Route('/')]
+    #[Route('/', name: 'app_homepage')]
     public function homepage(): Response
     {
         $tracks = [
@@ -29,16 +27,13 @@ class VinylController extends AbstractController
         ]);
     }
 
-    #[Route('/browse/{param}')]
-    public function browseOne(string $param = null): Response
+    #[Route('/browse/{slug}', name: 'app_browse')]
+    public function browse(string $slug = null): Response
     {
+        $genre = $slug ? u(str_replace('-', ' ', $slug))->title(true) : null;
 
-        if ($param) {
-            $title = 'Genre: ' . u(str_replace('-', ' ', $param))->title(true);
-        } else {
-            $title = 'All genres';
-        }
-
-        return new Response($title);
+        return $this->render('vinyl/browse.html.twig', [
+            'genre' => $genre
+        ]);
     }
 }
